@@ -1,0 +1,19 @@
+[middleware]
+
+	;
+	; Whether or not the middleware is disabled
+	;
+
+	disabled = false
+
+	;
+	; The priority for the middleware
+	;
+
+	priority = 1
+
+	;
+	; The middleware class
+	;
+
+	class = Hiraeth\Middleware\ExpandInputs
