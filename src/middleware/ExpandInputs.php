@@ -31,7 +31,7 @@ class ExpandInputs implements Middleware
 			$$input = array();
 
 			foreach ($request->{ 'get' . $method }() as $key => $value) {
-				if (strpos($key, '_') === FALSE) {
+				if (!strpos($key, '_')) {
 					$$input[$key] = $value;
 					continue;
 				}
