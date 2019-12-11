@@ -23,7 +23,6 @@ class ExpandInputs implements Middleware
 	{
 		$inputs = [
 			'files' => 'UploadedFiles',
-			'query' => 'QueryParams',
 			'body'  => 'ParsedBody'
 		];
 
