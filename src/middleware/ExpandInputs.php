@@ -21,30 +21,32 @@ class ExpandInputs implements Middleware
 	 */
 	public function process(Request $request, Handler $handler): Response
 	{
-		$inputs = [
-			'files' => 'UploadedFiles',
-			'body'  => 'ParsedBody'
-		];
+		if ($request->getHeaderLine('Content-Type') == 'multipart/form-data') {
+			$inputs = [
+				'files' => 'UploadedFiles',
+				'body'  => 'ParsedBody'
+			];
 
-		foreach ($inputs as $input => $method) {
-			$$input = array();
+			foreach ($inputs as $input => $method) {
+				$$input = array();
 
-			foreach ($request->{ 'get' . $method }() as $key => $value) {
-				if (!strpos($key, '_')) {
-					$$input[$key] = $value;
-					continue;
+				foreach ($request->{'get' . $method}() as $key => $value) {
+					if (!strpos($key, '_')) {
+						$$input[$key] = $value;
+						continue;
+					}
+
+					$head = &$$input;
+
+					foreach (explode('_', $key) as $segment) {
+						$head = &$head[$segment];
+					}
+
+					$head = $value;
 				}
 
-				$head = &$$input;
-
-				foreach (explode('_', $key) as $segment) {
-					$head = &$head[$segment];
-				}
-
-				$head = $value;
+				$request = $request->{'with' . $method}($$input);
 			}
-
-			$request = $request->{ 'with' . $method }($$input);
 		}
 
 		return $handler->handle($request);
