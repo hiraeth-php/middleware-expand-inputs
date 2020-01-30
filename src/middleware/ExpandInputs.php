@@ -29,28 +29,43 @@ class ExpandInputs implements Middleware
 				'body'  => 'ParsedBody'
 			];
 
-			foreach ($inputs as $input => $method) {
-				$$input = array();
-
-				foreach ($request->{'get' . $method}() as $key => $value) {
-					if (!strpos($key, '_')) {
-						$$input[$key] = $value;
-						continue;
-					}
-
-					$head = &$$input;
-
-					foreach (explode('_', $key) as $segment) {
-						$head = &$head[$segment];
-					}
-
-					$head = $value;
-				}
-
-				$request = $request->{'with' . $method}($$input);
+			foreach ($inputs as $method) {
+				$request = $request->{'with' . $method}(
+					$this->expand($request, $request->{'get' . $method}())
+				);
 			}
 		}
 
 		return $handler->handle($request);
+	}
+
+
+	/**
+	 *
+	 */
+	protected function expand(Request $request, $inputs): array
+	{
+		$data = array();
+
+		foreach ($inputs as $key => $value) {
+			if ($value instanceof UploadedFile && $value->getError() == UPLOAD_ERR_NO_FILE) {
+				continue;
+			}
+
+			if (!strpos($key, '_')) {
+				$data[$key] = $value;
+				continue;
+			}
+
+			$head = &$data;
+
+			foreach (explode('_', $key) as $segment) {
+				$head = &$head[$segment];
+			}
+
+			$head = $value;
+		}
+
+		return $data;
 	}
 }
