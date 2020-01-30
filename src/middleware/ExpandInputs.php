@@ -21,7 +21,9 @@ class ExpandInputs implements Middleware
 	 */
 	public function process(Request $request, Handler $handler): Response
 	{
-		if ($request->getHeaderLine('Content-Type') == 'multipart/form-data') {
+		$type = $request->getHeaderLine('Content-Type');
+
+		if (in_array('multipart/form-data', explode(';', $type))) {
 			$inputs = [
 				'files' => 'UploadedFiles',
 				'body'  => 'ParsedBody'
