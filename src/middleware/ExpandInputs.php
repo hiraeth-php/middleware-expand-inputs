@@ -60,6 +60,10 @@ class ExpandInputs implements Middleware
 			$head = &$data;
 
 			foreach (explode('_', $key) as $segment) {
+				if (!is_array($head)) {
+					settype($head, 'array');
+				}
+
 				$head = &$head[$segment];
 			}
 
