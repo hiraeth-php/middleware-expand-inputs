@@ -41,7 +41,8 @@ class ExpandInputs implements Middleware
 
 
 	/**
-	 *
+	 * @param array<string, mixed> $inputs
+	 * @return array<string, mixed>
 	 */
 	protected function expand(Request $request, $inputs): array
 	{
