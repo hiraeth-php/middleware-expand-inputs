@@ -21,7 +21,10 @@ class ExpandInputs implements Middleware
 	 */
 	public function process(Request $request, Handler $handler): Response
 	{
-		$type = $request->getHeaderLine('Content-Type');
+		$type    = $request->getHeaderLine('Content-Type');
+		$request = $request->withQueryParams(
+			$this->expand($request, $request->getQueryParams())
+		);
 
 		if (in_array('multipart/form-data', explode(';', $type))) {
 			$inputs = [
@@ -66,6 +69,10 @@ class ExpandInputs implements Middleware
 				}
 
 				$head = &$head[$segment];
+			}
+
+			if (isset($value[0]) && in_array($value[0], ['{', '[', '"'])) {
+				$value = json_decode($value);
 			}
 
 			$head = $value;
