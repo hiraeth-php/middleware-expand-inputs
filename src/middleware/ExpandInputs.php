@@ -25,7 +25,7 @@ class ExpandInputs implements Middleware
 	{
 		$type    = $request->getHeaderLine('content-type');
 		$request = $request->withQueryParams(
-			$this->expand($request, $request->getQueryParams())
+			$this->expand($request->getQueryParams())
 		);
 
 		$request = match (TRUE) {
